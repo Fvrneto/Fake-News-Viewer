@@ -15,7 +15,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
-import pickle
+from nltk import word_tokenize
 
 ############################ download stopwords
 
@@ -99,26 +99,38 @@ best_model.fit(X_train, y_train)
 
 ############################ user text
 
-path_user_fake = 'C:/Users/franc/Desktop/TechLabs/GitHub/Fake-News-Viewer/other_data_set/archive/Fake.csv'
-path_user_true = 'C:/Users/franc/Desktop/TechLabs/GitHub/Fake-News-Viewer/other_data_set/archive/True.csv'
+path_user_fake = 'C:/Users/franc/Desktop/TechLabs/GitHub/Fake-News-Viewer/other_data_set/archive/Fake_user.txt'
+path_user_true = 'C:/Users/franc/Desktop/TechLabs/GitHub/Fake-News-Viewer/other_data_set/archive/True_user.txt'
 
-df_user_true = pd.read_csv(path_user_true)
-df_user_fake = pd.read_csv(path_user_fake)
+df_user_true_path = open(path_user_true, "r")
+df_user_fake_path = open(path_user_fake, "r")
 
-############################ cleaning process
 
-df_user_true = df_user_true["text"].apply(cleaning.clean_steapwords())
-df_user_fake = df_user_fake["text"].apply(cleaning.clean_steapwords())
+df_user_true = df_user_true_path.read()
+df_user_fake = df_user_fake_path.read()
+#df_user_fake = pd.read_csv(path_user_fake, delimiter='\t', header=None, index_col=False)
 
-df_user_true = df_user_true.iloc[0]
-df_user_fake = df_user_fake.iloc[1]
+df_user_true_path.close()
+df_user_fake_path.close()
 
+
+############################ cleaning process for user data
+
+df_user_true_token = word_tokenize(df_user_true)
+df_user_fake_token = word_tokenize(df_user_fake)
+
+stopwords = cleaning.stopwords()
+
+df_user_true_token = [word for word in df_user_true_token if not word in stopwords]
+df_user_true = (" ").join(df_user_true_token)
 df_user_true = cleaning.clean_punctuations(df_user_true)
-df_user_true = cleaning.clean_punctuations(df_user_true)
+df_user_true = cleaning.clean_numbers(df_user_true)
 
 
+df_user_fake_token = [word for word in df_user_fake_token if not word in stopwords]
+df_user_fake = (" ").join(df_user_fake_token)
 df_user_fake = cleaning.clean_punctuations(df_user_fake)
-df_user_fake = cleaning.clean_punctuations(df_user_fake)
+df_user_fake = cleaning.clean_numbers(df_user_fake)
 
 ############################ predict user text
 
