@@ -16,7 +16,7 @@ nltk.download('all')
 
 ############################ path to the training data set
 
-path_train = 'C:/Users/franc/Desktop/TechLabs/fake-news/train.csv'
+path_train = '/Users/lukasfrickelgooglemail.com/Desktop/Techlabs/Input/train.csv'
 
 ############################ openin data
 
@@ -24,6 +24,7 @@ df = pd.read_csv(path_train)
 df = df[df['text'].notna()]
 df.reset_index(drop=True, inplace=True)
 
+df
 ############################ dropping nan:
     
 df['title'] = df['title'].fillna('None')
@@ -209,4 +210,34 @@ df_token_reliable_ne['text'] = df_token_reliable_ne['text'].apply(ne_chunk)
 df_token_unreliable_ne = df_token_unreliable_pos
 df_token_unreliable_ne['title'] = df_token_unreliable_ne['title'].apply(ne_chunk)
 df_token_unreliable_ne['text'] = df_token_unreliable_ne['text'].apply(ne_chunk)
+
+
+
+
+############################ Code visualization (Lukas)
+
+############################ Plot number reliable & unreliable text
+
+sns.set_style("darkgrid")
+sns.countplot(df_token.label)
+
+
+############################ Plot characters in text
+
+fig,(ax1,ax2)=plt.subplots(1,2,figsize=(12,8))
+text_len=df_token[df_token['label']==0]['text'].str.len()
+ax1.hist(text_len,color='green')
+ax1.set_title('reliable text')
+text_len=df_token[df_token['label']==1]['text'].str.len()
+ax2.hist(text_len,color='red')
+ax2.set_title('unreliable text')
+fig.suptitle('Characters in texts')
+plt.show()
+
+
+
+############################ Boxplot of length of characters in reliable & unreliable text
+
+sns.boxplot("label", "text_len", data = df_token)
+plt.title("Boxplot of the length of characters in Fake and Genuine Articles")
 
