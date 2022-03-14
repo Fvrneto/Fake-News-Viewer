@@ -24,6 +24,12 @@ stopw.extend(new_stepw)
 punct = string.punctuation
 punct = punct + "‘" + "’" + '“' + '”' + '—' + "–"
 
+def stopwords():
+    
+    text=stopw
+    
+    return(text)
+
 def clean_punctuations(text):
     
     text = re.sub('[%s]' % punct, '', text)

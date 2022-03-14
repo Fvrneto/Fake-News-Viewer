@@ -12,9 +12,13 @@ from nltk import ne_chunk
 import Modules_User.cleaning as cleaning 
 import Modules_User.frequences as frequences
 
-#nltk.download('all')
+nltk.download('all')
+
+############################ path to the training data set
 
 path_train = 'C:/Users/franc/Desktop/TechLabs/fake-news/train.csv'
+
+############################ openin data
 
 df = pd.read_csv(path_train)
 df = df[df['text'].notna()]
@@ -73,34 +77,33 @@ uncleaned_fdist_text_unreliable_plot = frequences.dist_freq_plot(uncleaned_fdist
 
 ############################ removing stopwords, numbers and punctuations
 
-df_stopwords = pd.read_csv(path_train)
-df_stopwords = df_stopwords[df_stopwords['text'].notna()]
-df_stopwords.reset_index(drop=True, inplace=True)  
-df_stopwords['title'] = df_stopwords['title'].fillna('None')
-df_stopwords['author'] = df_stopwords['author'].fillna('None')
-df_stopwords = df_stopwords[df_stopwords['text'].notna()]
-df_stopwords.reset_index(drop=True, inplace=True)
+df_cleaned = pd.read_csv(path_train)
+df_cleaned = df_cleaned[df_cleaned['text'].notna()]
+df_cleaned.reset_index(drop=True, inplace=True)  
+df_cleaned['title'] = df_cleaned['title'].fillna('None')
+df_cleaned['author'] = df_cleaned['author'].fillna('None')
+df_cleaned = df_cleaned[df_cleaned['text'].notna()]
+df_cleaned.reset_index(drop=True, inplace=True)
     
-df_stopwords['title'] = df_stopwords['title'].fillna('None')
-df_stopwords['author'] = df_stopwords['author'].fillna('None')
-df_stopwords = df_stopwords[df_stopwords['text'].notna()]
-df_stopwords.reset_index(drop=True, inplace=True)
+df_cleaned['title'] = df_cleaned['title'].fillna('None')
+df_cleaned['author'] = df_cleaned['author'].fillna('None')
+df_cleaned = df_cleaned[df_cleaned['text'].notna()]
+df_cleaned.reset_index(drop=True, inplace=True)
 
 
-df_stopwords['title'] = df_stopwords['title'].apply(lambda x: cleaning.clean_numbers(x))
-df_stopwords['title'] = df_stopwords['title'].apply(cleaning.clean_steapwords())
-df_stopwords['title'] = df_stopwords['title'].apply(lambda x: cleaning.clean_punctuations(x))
+df_cleaned['title'] = df_cleaned['title'].apply(lambda x: cleaning.clean_numbers(x))
+df_cleaned['title'] = df_cleaned['title'].apply(cleaning.clean_steapwords())
+df_cleaned['title'] = df_cleaned['title'].apply(lambda x: cleaning.clean_punctuations(x))
 
 
-df_stopwords['text'] = df_stopwords['text'].apply(lambda x: cleaning.clean_numbers(x))
-df_stopwords['text'] = df_stopwords['text'].apply(cleaning.clean_steapwords())
-df_stopwords['text'] = df_stopwords['text'].apply(lambda x: cleaning.clean_punctuations(x))
+df_cleaned['text'] = df_cleaned['text'].apply(lambda x: cleaning.clean_numbers(x))
+df_cleaned['text'] = df_cleaned['text'].apply(cleaning.clean_steapwords())
+df_cleaned['text'] = df_cleaned['text'].apply(lambda x: cleaning.clean_punctuations(x))
 
-df_train = df_stopwords
 
 ############################ tokenization:
     
-df_token = df_stopwords
+df_token = df_cleaned
 
 df_token['title'] = df_token['title'].apply(word_tokenize)
 df_token['author'] = df_token['author'].apply(word_tokenize)
@@ -196,7 +199,7 @@ fdist_text_reliable_plot = frequences.dist_freq_plot(tags_text_reliable , 10,
 fdist_text_unreliable_plot = frequences.dist_freq_plot(tags_text_unreliable , 10, 
                                             '10 most commun POS in the Unreliable texts', 'red')
    
-############################ Name ententity
+############################webdavs://webdav.hhu.de/DavWWWRoot/gilch/Daten/Home/Riel Neto/Softwares/Wavelenght_spectra/wavelenght_spectra.pywebdavs://webdav.hhu.de/DavWWWRoot/gilch/Daten/Home/Riel Neto/Softwares/Wavelenght_spectra/wavelenght_spectra.py
 
 df_token_reliable_ne = df_token_reliable_pos
 df_token_reliable_ne['title'] = df_token_reliable_ne['title'].apply(ne_chunk)
