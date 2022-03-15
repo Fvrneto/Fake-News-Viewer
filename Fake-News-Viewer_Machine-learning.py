@@ -2,7 +2,7 @@
 """
 Created on Wed Mar  2 21:32:32 2022
 
-@author: franc
+@author: Francisco, Mimi, Lukas, Ibrahim
 """
 
 import pandas as pd
@@ -19,18 +19,23 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from nltk import word_tokenize
+import re
+import seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-############################ download stopwords
+
+############################ download nltk
 
 import nltk
-nltk.download('stopwords')
+nltk.download('all')
 
 ############################ Importing user modules
 
 import Modules_User.cleaning as cleaning 
 
 ############################ 
-
+ 
 path_user = 'C:/Users/franc/Desktop/TechLabs/GitHub/'
 
 path_train_fixed = 'Fake-News-Viewer/Data_set/fake-news/train.csv'
@@ -60,6 +65,9 @@ df_test['title'] = df_test['title'].fillna('None')
 df_test['author'] = df_test['author'].fillna('None')
 df_test = df_test[df_test['text'].notna()]
 df.reset_index(drop=True, inplace=True)
+
+############################ Machine Learning ############################
+############################                  ############################
 
 ############################ removing stopwords, numbers and punctuations
 
@@ -148,17 +156,15 @@ print(df_models)
 
 ############################ Using best model = LogisticRegression() to predict user text
 
-best_model = LogisticRegression()
+best_model = RandomForestClassifier()
 best_model.fit(X_train, y_train)
 
 ############################ user text
 
-path_user = 'C:/Users/franc/Desktop/TechLabs/GitHub/Fake-News-Viewer/User_text/True_user.txt'
+path_user_data = path_user + 'Fake-News-Viewer/User_text/True_user.txt'
 
-df_user_path = open(path_user, encoding="utf8")
-
+df_user_path = open(path_user_data, encoding="utf8")
 df_user = df_user_path.read()
-
 df_user_path.close()
 
 ############################ cleaning process for user data
@@ -168,17 +174,175 @@ df_user_token = word_tokenize(df_user)
 stopwords = cleaning.stopwords()
 
 df_user_token = [word for word in df_user_token if not word in stopwords]
-df_user = (" ").join(df_user_token)
-df_user = cleaning.clean_punctuations(df_user)
-df_user = cleaning.clean_numbers(df_user)
+df_user_clean = (" ").join(df_user_token)
+df_user_clean = cleaning.clean_punctuations(df_user_clean)
+df_user_clean = cleaning.clean_numbers(df_user_clean)
 
 ############################ predict user text
 
-X_user = cv.transform([df_user])
+X_user = cv.transform([df_user_clean])
 user_pred = best_model.predict(X_user)
-user_pred_value =  user_pred[0]
+user_pred_value = user_pred[0]
 
 if user_pred == 0:
-    print ("Based on the data set used to fit this algorithm, the informed test is reliable.")
+    print ("\nBased on the data set used to fit this algorithm, the informed test is reliable.")
 else:
-    print ("Based on the data set used to fit this algorithm, the informed test is unreliable.")
+    print ("\nBased on the data set used to fit this algorithm, the informed test is unreliable.")
+
+############################ Plotting step ############################
+############################               ############################
+
+############################ changing 0 and 1 to reliable and unreliable
+
+df = pd.read_csv(path_train)
+df['title'] = df['title'].fillna('None')
+df['author'] = df['author'].fillna('None')
+df = df[df['text'].notna()]
+df.reset_index(drop=True, inplace=True)
+
+
+df_test['title'] = df_test['title'].fillna('None')
+df_test['author'] = df_test['author'].fillna('None')
+df_test = df_test[df_test['text'].notna()]
+df.reset_index(drop=True, inplace=True)
+
+df['label'] = df['label'].map({1:'unreliable', 0: 'reliable'})
+
+############################ leters in text
+
+df['Leters in text'] = df['text'].apply(lambda x: len(x))
+sns.set_theme(style="darkgrid")
+leters_in_text = sns.boxplot(y='Leters in text', x='label', data=df, palette="Set3")
+plt.show()
+plt.close()
+
+############################ words in text
+
+def count_words(text):
+    words = len(text.split())
+    return words
+    
+df['Words in text'] = df['text'].apply(lambda x: count_words(x))
+sns.set_theme(style="darkgrid")
+words_in_text = sns.boxplot(y='Words in text', x='label', data=df, palette="Set3")
+plt.show()
+plt.close()
+
+############################ numbers in text
+
+def count_numbers(text):
+    numbers = len(re.findall('([0-9])',text))
+    return numbers
+
+df['Numbers in text'] = df['text'].apply(lambda x: count_numbers(x))
+sns.set_theme(style="darkgrid")
+numbers_in_text = sns.boxplot(y='Numbers in text', x='label', data=df, palette="Set3")
+plt.show()
+plt.close()
+
+############################ anzahl coordinating conjunctions
+def count_coor_conj(text):
+    cc1 = text.count('and')
+    cc2 = text.count('or')
+    cc3 = text.count('but')
+    cc4 = text.count('for')
+    cc5 = text.count('nor')
+    cc6 = text.count('yet')
+    cc7 = text.count('so')
+    coor_conj = cc1+cc2+cc3+cc4+cc5+cc6+cc7
+    return coor_conj
+
+df['Coordinating conjunctions'] = df['text'].apply(lambda x: count_coor_conj(x))
+sns.set_theme(style="darkgrid")
+coord_conjunc = sns.boxplot(y='Coordinating conjunctions', x='label', data=df, palette="Set3")
+plt.show()
+plt.close()
+
+############################ anzahl subordinating conjunctions
+def count_sub_conj(text):
+    sc1 = text.count('although')
+    sc2 = text.count('as')
+    sc3 = text.count('as long as')
+    sc4 = text.count('because')
+    sc5 = text.count('before')
+    sc6 = text.count('even if')
+    sc7 = text.count('if')
+    sc8 = text.count('in order to')
+    sc9 = text.count('in case')
+    sc10 = text.count('once')
+    sc11 = text.count('that')
+    sc12 = text.count('though')
+    sc13 = text.count('until')
+    sc14 = text.count('when')
+    sc15 = text.count('whenever')
+    sc16 = text.count('wherever')
+    sc17 = text.count('while')
+    sub_conj = sc1+sc2+sc3+sc4+sc5+sc6+sc7+sc8+sc9+sc10+sc11+sc12+sc13+sc14+sc15+sc16+sc17
+    return sub_conj
+
+df['Subordinating conjunctions'] = df['text'].apply(lambda x: count_sub_conj(x))
+sns.set_theme(style="darkgrid")
+subord_conjunc = sns.boxplot(y='Subordinating conjunctions', x='label', data=df, palette="Set3")
+plt.show()
+plt.close()
+
+############################ leter in text with user text
+
+lt_user = len(df_user)
+df_lt_user = pd.DataFrame({'Leters in text':[lt_user],'label':['User text']})
+df_lt = df.iloc[:,[5,4]]
+df_lt_f = f = pd.concat([df_lt, df_lt_user]).reset_index(drop=True)
+
+sns.set_theme(style="darkgrid")
+leters_in_text = sns.boxplot(y='Leters in text', x='label', data=df_lt_f, palette="Set3")
+plt.show()
+plt.close()
+
+############################ words in text
+
+wrd_user = count_words(df_user)
+df_wrd_user = pd.DataFrame({'Words in text':[wrd_user],'label':['User text']})
+df_wrd = df.iloc[:,[6,4]]
+df_wrd_f = pd.concat([df_wrd, df_wrd_user]).reset_index(drop=True)
+
+sns.set_theme(style="darkgrid")
+words_in_text = sns.boxplot(y='Words in text', x='label', data=df_wrd_f, palette="Set3")
+plt.show()
+plt.close()
+
+############################ numbers in text
+
+nmb_user = count_numbers(df_user)
+df_nmb_user = pd.DataFrame({'Numbers in text':[nmb_user],'label':['User text']})
+df_nmb = df.iloc[:,[7,4]]
+df_nmb_f = pd.concat([df_nmb, df_nmb_user]).reset_index(drop=True)
+
+sns.set_theme(style="darkgrid")
+words_in_text = sns.boxplot(y='Numbers in text', x='label', data=df_nmb_f, palette="Set3")
+plt.show()
+plt.close()
+
+############################ anzahl coordinating conjunctions
+
+cc_user = count_coor_conj(df_user)
+df_cc_user = pd.DataFrame({'Coordinating conjunctions':[cc_user],'label':['User text']})
+df_cc = df.iloc[:,[8,4]]
+df_cc_f = pd.concat([df_cc, df_cc_user]).reset_index(drop=True)
+
+sns.set_theme(style="darkgrid")
+coord_conjunc = sns.boxplot(y='Coordinating conjunctions', x='label', data=df_cc_f , palette="Set3")
+plt.show()
+plt.close()
+
+############################ anzahl subordinating conjunctions
+
+sc_user = count_sub_conj(df_user)
+df_sc_user = pd.DataFrame({'Subordinating conjunctions':[sc_user],'label':['User text']})
+df_sc = df.iloc[:,[9,4]]
+df_sc_f = pd.concat([df_sc, df_sc_user]).reset_index(drop=True)
+
+sns.set_theme(style="darkgrid")
+subord_conjunc = sns.boxplot(y='Subordinating conjunctions', x='label', data=df_sc_f, palette="Set3")
+plt.show()
+plt.close()
+
