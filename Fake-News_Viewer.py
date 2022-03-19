@@ -422,6 +422,7 @@ unreliable = " ".join(df_token[df_token["label"]==1]["text_joined"])
 # Wordcloud for reliable
 wordcloud = WordCloud(width = 800, height = 800,
                 background_color ="white",
+                stopwords = cleaning.stopwords(),
                 min_font_size = 10).generate(reliable)
 plt.imshow(wordcloud)
 plt.axis("off")
@@ -433,6 +434,7 @@ plt.close()
 # Wordcloud for unreliable
 wordcloud = WordCloud(width = 800, height = 800,
                 background_color ="black",
+                stopwords = cleaning.stopwords(),
                 min_font_size = 10).generate(unreliable)
 plt.imshow(wordcloud)
 plt.axis("off")
@@ -445,6 +447,7 @@ plt.close()
 
 wordcloud = WordCloud(width = 800, height = 800,
                 background_color ="lightgray",
+                stopwords = cleaning.stopwords(),
                 min_font_size = 10).generate(df_user_clean)
 plt.imshow(wordcloud)
 plt.axis("off")

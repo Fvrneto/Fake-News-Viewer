@@ -20,6 +20,8 @@ for word in stopw:
         new_stepw.append(word_new2)
 
 stopw.extend(new_stepw)
+stopw.append('U')
+stopw.append('u')
 
 punct = string.punctuation
 punct = punct + "‘" + "’" + '“' + '”' + '—' + "–"
