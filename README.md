@@ -50,3 +50,5 @@ To run the code you need to have the following packages installed:
 After installing the packages you need to fill in path_user = path where the main folder is located.
 
 We split the code into two files: Fake-News-Viewer.py, that give an visual overview of the dataset and compare it the user input & Fake-News-Machine-learning.py where an algorithm is trained that can predict if the text provided by the user is reliable or unreliable compared to the dataset.
+
+There are already two exemples of user texts in the User_text folder that can be used by the codes (True_user and Fake_user). Both where taken from another data set (https://www.kaggle.com/clmentbisaillon/fake-and-real-news-dataset). In case you want to try with another text data, it is necessary to assign the path of this text data in path_user_data.

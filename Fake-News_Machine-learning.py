@@ -162,20 +162,20 @@ param_rnd= {
            'min_samples_leaf': min_samples_leaf
            }
  
-rnd_search = RandomizedSearchCV(RandomForestClassifier(), param_rnd, n_iter = 10)
+rnd_search = RandomizedSearchCV(RandomForestClassifier(), param_rnd, n_iter = 15)
 rnd_search.fit(X_train,y_train)
 rnd_param = rnd_search.best_params_
 
-max_iter = np.arange(100,900,100).tolist()
+max_iter = np.arange(100,1100,100).tolist()
 
 param_ld = {
             'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
-            'penalty': ['l1', 'l2'],
-            'max_iter': [100, 1000, 2500, 5000],
+            'penalty': ['l2'],
+            'max_iter': max_iter,
             'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
             }
 
-ld_search = RandomizedSearchCV(LogisticRegression(), param_ld, n_iter = 10)
+ld_search = RandomizedSearchCV(LogisticRegression(), param_ld, n_iter = 15)
 ld_search.fit(X_train,y_train)
 ld_param = ld_search.best_params_
 
@@ -197,8 +197,8 @@ Models_reduce = [LogisticRegression(penalty= ld_param['penalty'],
                                         ),
                  ]
 
-Models_text = ['Reduce overfitting LogisticRegression',
-               'Reduce overfitting RandomForestClassifier',             
+Models_text = ['LogisticRegression',
+               'RandomForestClassifier',             
                ]
 
 Model_accuracy = []
@@ -239,6 +239,7 @@ df_models_reduce = pd.DataFrame({'Models': Models_text,
                          'F1_scorel': F1_score
                          })
 
+print ("\nSelected models with reduced overffitting.")
 print(df_models_reduce)
 
 
