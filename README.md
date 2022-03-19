@@ -47,6 +47,6 @@ To run the code you need to have the following packages installed:
    * from sklearn.ensemble import AdaBoostClassifier 
  * Re 
 
-After installing the packages you need to fill in path_user = path where the main folder is located to upload the data set.
+After installing the packages you need to fill in path_user = path where the main folder is located.
 
 We split the code into two files: Fake-News-Viewer.py, that give an visual overview of the dataset and compare it the user input & Fake-News-Machine-learning.py where an algorithm is trained that can predict if the text provided by the user is reliable or unreliable compared to the dataset.
